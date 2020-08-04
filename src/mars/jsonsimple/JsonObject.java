@@ -2,29 +2,21 @@ package mars.jsonsimple;
 //=======================================================
 import java.util.ArrayList;
 //=======================================================
-/**
- *
- * @author Mariano
- */
-public class JsonObject
-{
+public class JsonObject {
     //===================================================
     ArrayList<JsonPair> pairs = new ArrayList<>();
     //===================================================
-    public void addPair(JsonPair pair)
-    {
+    public void addPair(JsonPair pair) {
         pairs.add(pair);
     }
     //===================================================
-    String getTextCompact ()
-    {
+    String getTextCompact () {
         StringBuilder str = new StringBuilder();
         //-----------------------------------------------
         str.append("{");
         //-----------------------------------------------
         boolean first = true;
-        for (JsonPair pair : pairs)
-        {
+        for (JsonPair pair : pairs) {
             //-------------------------------------------
             if (!first) str.append(",");
             else first = false;
@@ -38,15 +30,13 @@ public class JsonObject
         //-----------------------------------------------
     }
     //===================================================
-    String getText ()
-    {
+    String getText () {
         StringBuilder str = new StringBuilder();
         //-----------------------------------------------
         str.append("{");
         //-----------------------------------------------
         boolean first = true;
-        for (JsonPair pair : pairs)
-        {
+        for (JsonPair pair : pairs) {
             //-------------------------------------------
             if (!first) str.append(",\n");
             else first = false;
@@ -65,8 +55,7 @@ public class JsonObject
      * @param name
      * @return 
      */
-    public boolean checkPair (String name)
-    {
+    public boolean checkPair (String name) {
         String n = name.toLowerCase();
         for (JsonPair pair : pairs)
             if (n.equals(pair.nme.toLowerCase())) return true;
@@ -79,8 +68,7 @@ public class JsonObject
      * @return
      * @throws JsonPairNotFoundException 
      */
-    public JsonPair getPair (String name) throws JsonPairNotFoundException
-    {
+    public JsonPair getPair (String name) throws JsonPairNotFoundException {
         String n = name.toLowerCase();
         for (JsonPair pair : pairs)
             if (n.equals(pair.nme.toLowerCase())) return pair;
@@ -88,11 +76,9 @@ public class JsonObject
     }
     //===================================================
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getText();
     }
     //===================================================
-    
 }
 //=======================================================

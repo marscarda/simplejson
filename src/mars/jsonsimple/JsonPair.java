@@ -10,13 +10,11 @@ import java.net.URLEncoder;
  * See also JsonObject
  * @author Mariano
  */
-public class JsonPair
-{
+public class JsonPair {
     //===========================================================
     public JsonPair () {}
     //-----------------------------------------------------------
-    public JsonPair (String name)
-    {
+    public JsonPair (String name) {
         nme = name;
         type = JsonValueType.NULL;
     }
@@ -26,27 +24,23 @@ public class JsonPair
      * @param name
      * @param value 
      */
-    public JsonPair (String name, String value)
-    {
+    public JsonPair (String name, String value) {
         nme = name;
         type = JsonValueType.STRING;
         String v;
-        try 
-        {
+        try {
             v = URLEncoder.encode(value, "UTF-8"); 
             val = v.replaceAll("\\+", " ");
             setok = true;
         }
-        catch (UnsupportedEncodingException e) 
-        {
+        catch (UnsupportedEncodingException e) {
             val = value;
             setok = false; 
             seterr = e.getMessage();
         }
     }
     //-----------------------------------------------------------
-    public JsonPair (String name, int value)
-    {
+    public JsonPair (String name, int value) {
         nme = name;
         val = value;
         type = JsonValueType.INTEGER;
@@ -57,15 +51,13 @@ public class JsonPair
      * @param name
      * @param value 
      */
-    public JsonPair (String name, Long value)
-    {
+    public JsonPair (String name, Long value) {
         nme = name;
         val = value;
         type = JsonValueType.INTEGER;
     }
     //-----------------------------------------------------------
-    public JsonPair (String name, Float value)
-    {
+    public JsonPair (String name, Float value) {
         nme = name;
         val = value;
         type = JsonValueType.FLOAT;
@@ -76,8 +68,7 @@ public class JsonPair
      * @param name
      * @param value 
      */
-    public JsonPair (String name, Double value)
-    {
+    public JsonPair (String name, Double value) {
         nme = name;
         val = value;
         type = JsonValueType.FLOAT;
@@ -88,8 +79,7 @@ public class JsonPair
      * @param name
      * @param value 
      */
-    public JsonPair (String name, Boolean value)
-    {
+    public JsonPair (String name, Boolean value) {
         nme = name;
         val = value;
         type = JsonValueType.BOOLEAN;
@@ -100,8 +90,7 @@ public class JsonPair
      * @param name
      * @param value 
      */
-    public JsonPair (String name, JsonObject value)
-    {
+    public JsonPair (String name, JsonObject value) {
         nme = name;
         val = value;
         type = JsonValueType.JSONOBJECT;
@@ -112,8 +101,7 @@ public class JsonPair
      * @param name
      * @param value 
      */
-    public JsonPair (String name, JsonObject[] value)
-    {
+    public JsonPair (String name, JsonObject[] value) {
         nme = name;
         val = value;
         type = JsonValueType.JSONARRAY;
@@ -126,64 +114,54 @@ public class JsonPair
     String seterr = null;
     //===========================================================
     public boolean isSetOk () { return setok; }
-    public String getSetError ()
-    {
+    public String getSetError () {
         if (seterr == null) return "";
         return seterr;
     }
     //===========================================================
     public void setName (String name){nme = name;}
     //-----------------------------------------------------------
-    public void setValue (String value) throws JsonValueTypeException
-    {
+    public void setValue (String value) throws JsonValueTypeException {
         type = JsonValueType.STRING;
         String v;
-        try 
-        {
+        try {
             v = URLEncoder.encode(value, "UTF-8"); 
             val = v.replaceAll("\\+", "%20");
             setok = true;
         }
-        catch (UnsupportedEncodingException e) 
-        {
+        catch (UnsupportedEncodingException e) {
             val = value;
             setok = false; 
             seterr = e.getMessage();
         }
     }
     //-----------------------------------------------------------
-    void setEncodedValue (String value)
-    {
+    void setEncodedValue (String value) {
         type = JsonValueType.STRING;
         val = value;
     }
     //-----------------------------------------------------------
-    public void setValue (Long value)
-    {
+    public void setValue (Long value) {
         type = JsonValueType.INTEGER;
         val = value;
     }
     //-----------------------------------------------------------
-    public void setValue (Double value)
-    {
+    public void setValue (Double value) {
         type = JsonValueType.FLOAT;
         val = value;
     }
     //-----------------------------------------------------------
-    public void setValue (Boolean value)
-    {
+    public void setValue (Boolean value) {
         type = JsonValueType.BOOLEAN;
         val = value;
     }
     //-----------------------------------------------------------
-    public void setValue (JsonObject value)
-    {
+    public void setValue (JsonObject value) {
         type = JsonValueType.JSONOBJECT;
         val = value;
     }
     //-----------------------------------------------------------
-    public void setValue (JsonObject[] value)
-    {
+    public void setValue (JsonObject[] value) {
         type = JsonValueType.JSONARRAY;
         val = value;
     }
@@ -191,48 +169,40 @@ public class JsonPair
     public String getName(){return nme;}
     public JsonValueType getValueType (){ return type; }
     //===========================================================
-    public String getStringValue() throws JsonValueTypeException
-    {
+    public String getStringValue() throws JsonValueTypeException {
         if (type == JsonValueType.JSONOBJECT)
             throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject");
         if (type == JsonValueType.JSONARRAY)
             throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject array");
-        try
-        {
+        try {
             String urlEncoded = String.valueOf(val);
             return URLDecoder.decode(urlEncoded, "UTF-8");
         }
         catch (Exception e) { throw new JsonValueTypeException("Filed to decode URLEncode text"); }
     }
     //-----------------------------------------------------------
-    public String getRawStringValue() throws JsonValueTypeException
-    {
+    public String getRawStringValue() throws JsonValueTypeException {
         return String.valueOf(val);
     }
     //-----------------------------------------------------------
-    public Long getLongValue() throws JsonValueTypeException
-    {
+    public Long getLongValue() throws JsonValueTypeException {
         if (type == JsonValueType.INTEGER) return (Long)val;
         throw new JsonValueTypeException("Invalid type requested. Pair doesn't contains an integer number");
     }
     //-----------------------------------------------------------
-    public Double getDoubleValue() throws JsonValueTypeException
-    {
+    public Double getDoubleValue() throws JsonValueTypeException {
         if (type == JsonValueType.INTEGER) return Double.valueOf(String.valueOf(val));
         if (type == JsonValueType.FLOAT) return (Double)val;
         throw new JsonValueTypeException("Invalid type requested. Pair doesn't contains a number");
     }
     //-----------------------------------------------------------
-    public Boolean getBooleanValue() throws JsonValueTypeException
-    {
+    public Boolean getBooleanValue() throws JsonValueTypeException {
         if (type == JsonValueType.BOOLEAN) return (Boolean)val;
         throw new JsonValueTypeException("Invalid type requested. Pair contains a boolean");
     }
     //-----------------------------------------------------------
-    public int getIntValue () throws JsonValueTypeException
-    {
-        if (type == JsonValueType.INTEGER)
-        {
+    public int getIntValue () throws JsonValueTypeException {
+        if (type == JsonValueType.INTEGER) {
             String s = String.valueOf(val);
             try { return Integer.valueOf(s); }
             catch (Exception e) { throw new JsonValueTypeException("Invalid type requested. Pair contains a boolean"); }
@@ -240,8 +210,7 @@ public class JsonPair
         throw new JsonValueTypeException("Invalid type requested. Pair contains a number");
     }
     //-----------------------------------------------------------
-    public JsonObject getChildJsonObject() throws JsonValueTypeException
-    {
+    public JsonObject getChildJsonObject() throws JsonValueTypeException {
         if (type == JsonValueType.JSONOBJECT) return (JsonObject)val;
         throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject");
     }
@@ -251,11 +220,9 @@ public class JsonPair
      * @return
      * @throws JsonValueTypeException 
      */
-    public JsonObject[] getChildArray () throws JsonValueTypeException
-    {
+    public JsonObject[] getChildArray () throws JsonValueTypeException {
         if (type == JsonValueType.JSONARRAY) return (JsonObject[])val;
-        if (type == JsonValueType.JSONOBJECT)
-        {
+        if (type == JsonValueType.JSONOBJECT) {
             JsonObject[] ar = new JsonObject[1];
             ar[0] = (JsonObject)val;
             return ar;
@@ -263,15 +230,12 @@ public class JsonPair
         throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject array");
     }
     //===========================================================
-    public String getTextCompact ()
-    {
+    public String getTextCompact () {
         //-------------------------------------------------
         StringBuilder str = new StringBuilder();
-        {
-            str.append("\"");
-            str.append(nme);
-            str.append("\":");
-        }
+        str.append("\"");
+        str.append(nme);
+        str.append("\":");
         //-------------------------------------------------
         switch (type)
         {
@@ -292,15 +256,13 @@ public class JsonPair
                 str.append(val);
                 break;
             //---------------------------------------------------
-            case JSONOBJECT:
-            {
+            case JSONOBJECT: {
                 JsonObject obj = (JsonObject)val;
                 str.append(obj.getTextCompact());
                 break;
             }
             //---------------------------------------------------
-            case JSONARRAY:
-            {
+            case JSONARRAY: {
                 JsonObject[] objs = (JsonObject[])val;
                 str.append("[");
                 boolean first = true;
@@ -317,18 +279,15 @@ public class JsonPair
         return str.toString();
     }
     //===========================================================
-    String getText ()
-    {
+    String getText () {
         //-------------------------------------------------
-        StringBuilder str = new StringBuilder();
-        {
+        StringBuilder str = new StringBuilder(); {
             str.append(" \"");
             str.append(nme);
             str.append("\" : ");
         }
         //-------------------------------------------------
-        switch (type)
-        {
+        switch (type) {
             //---------------------------------------------
             case NULL:
                 str.append("null ");
@@ -347,15 +306,13 @@ public class JsonPair
                 str.append(" ");
                 break;
             //---------------------------------------------------
-            case JSONOBJECT:
-            {
+            case JSONOBJECT: {
                 JsonObject obj = (JsonObject)val;
                 str.append(obj.getText());
                 break;
             }
             //---------------------------------------------------
-            case JSONARRAY:
-            {
+            case JSONARRAY: {
                 JsonObject[] objs = (JsonObject[])val;
                 str.append(" [\n");
                 boolean first = true;
