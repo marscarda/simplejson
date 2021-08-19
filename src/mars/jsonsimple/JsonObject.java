@@ -66,13 +66,12 @@ public class JsonObject {
      * Returns a pair.
      * @param name
      * @return
-     * @throws JsonPairNotFoundException 
      */
-    public JsonPair getPair (String name) throws JsonPairNotFoundException {
+    public JsonPair getPair (String name) {
         String n = name.toLowerCase();
         for (JsonPair pair : pairs)
             if (n.equals(pair.nme.toLowerCase())) return pair;
-        throw new JsonPairNotFoundException("Pair not found");
+        return new JsonPair("na", "n/a");
     }
     //===================================================
     @Override

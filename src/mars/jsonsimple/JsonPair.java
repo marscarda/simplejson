@@ -11,7 +11,7 @@ import java.net.URLEncoder;
  * @author Mariano
  */
 public class JsonPair {
-    //===========================================================
+    //***************************************************************
     public JsonPair () {}
     //-----------------------------------------------------------
     public JsonPair (String name) {
@@ -106,14 +106,17 @@ public class JsonPair {
         val = value;
         type = JsonValueType.JSONARRAY;
     }
-    //===========================================================
+    //***************************************************************
     JsonValueType type = JsonValueType.NULL;
     String nme = "name";
     Object val = null;
     boolean setok = false;
     String seterr = null;
+    boolean valdidfail = false;
+    //***************************************************************
+    public boolean fetchValDidFail () { return valdidfail; }
     //===========================================================
-    public boolean isSetOk () { return setok; }
+    //public boolean isSetOk () { return setok; }
     public String getSetError () {
         if (seterr == null) return "";
         return seterr;
@@ -170,10 +173,7 @@ public class JsonPair {
     public JsonValueType getValueType (){ return type; }
     //===========================================================
     public String getStringValue() throws JsonValueTypeException {
-        if (type == JsonValueType.JSONOBJECT)
-            throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject");
-        if (type == JsonValueType.JSONARRAY)
-            throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject array");
+        if (type == JsonValueType.JSONOBJECT || type == JsonValueType.JSONARRAY) return "";
         try {
             String urlEncoded = String.valueOf(val);
             return URLDecoder.decode(urlEncoded, "UTF-8");
@@ -185,49 +185,48 @@ public class JsonPair {
         return String.valueOf(val);
     }
     //-----------------------------------------------------------
-    public Long getLongValue() throws JsonValueTypeException {
+    public Long getLongValue() {
         if (type == JsonValueType.INTEGER) return (Long)val;
-        throw new JsonValueTypeException("Invalid type requested. Pair doesn't contains an integer number");
+        return (long)0;
     }
     //-----------------------------------------------------------
-    public Double getDoubleValue() throws JsonValueTypeException {
+    public Double getDoubleValue() {
         if (type == JsonValueType.INTEGER) return Double.valueOf(String.valueOf(val));
         if (type == JsonValueType.FLOAT) return (Double)val;
-        throw new JsonValueTypeException("Invalid type requested. Pair doesn't contains a number");
+        return (double)0;
     }
     //-----------------------------------------------------------
-    public Boolean getBooleanValue() throws JsonValueTypeException {
+    public Boolean getBooleanValue() {
         if (type == JsonValueType.BOOLEAN) return (Boolean)val;
-        throw new JsonValueTypeException("Invalid type requested. Pair contains a boolean");
+        return false;
     }
     //-----------------------------------------------------------
-    public int getIntValue () throws JsonValueTypeException {
+    public int getIntValue ()  {
         if (type == JsonValueType.INTEGER) {
             String s = String.valueOf(val);
             try { return Integer.valueOf(s); }
-            catch (Exception e) { throw new JsonValueTypeException("Invalid type requested. Pair contains a boolean"); }
+            catch (Exception e) { return 0; }
         }
-        throw new JsonValueTypeException("Invalid type requested. Pair contains a number");
+        return 0;
     }
     //-----------------------------------------------------------
-    public JsonObject getChildJsonObject() throws JsonValueTypeException {
+    public JsonObject getChildJsonObject() {
         if (type == JsonValueType.JSONOBJECT) return (JsonObject)val;
-        throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject");
+        return new JsonObject();
     }
     //===========================================================
     /**
      * Returns the jsonobjects array
-     * @return
-     * @throws JsonValueTypeException 
+     * @return 
      */
-    public JsonObject[] getChildArray () throws JsonValueTypeException {
+    public JsonObject[] getChildrenArray () {
         if (type == JsonValueType.JSONARRAY) return (JsonObject[])val;
         if (type == JsonValueType.JSONOBJECT) {
             JsonObject[] ar = new JsonObject[1];
             ar[0] = (JsonObject)val;
             return ar;
         }
-        throw new JsonValueTypeException("Invalid type requested. Pair contains a JsonObject array");
+        return new JsonObject[0];
     }
     //===========================================================
     public String getTextCompact () {
@@ -329,8 +328,6 @@ public class JsonPair {
         return str.toString();
     }
     //===========================================================
-    
-    //===========================================================
     public String replaceUTF8(String raw)
     {
         StringBuilder process = new StringBuilder(raw);
@@ -427,7 +424,6 @@ public class JsonPair {
         }
         return process.toString();
     }
-
     //===========================================================
 }
 //===============================================================
