@@ -181,7 +181,7 @@ public class JsonPair {
         catch (Exception e) { throw new JsonValueTypeException("Filed to decode URLEncode text"); }
     }
     //-----------------------------------------------------------
-    public String getRawStringValue() throws JsonValueTypeException {
+    public String getRawStringValue() {
         return String.valueOf(val);
     }
     //-----------------------------------------------------------
@@ -197,8 +197,22 @@ public class JsonPair {
     }
     //-----------------------------------------------------------
     public Boolean getBooleanValue() {
-        if (type == JsonValueType.BOOLEAN) return (Boolean)val;
+        
+        String a = this.getRawStringValue();
+        
+        System.out.println("QQQ " + a);
+        
+        return Boolean.parseBoolean(a);
+        
+        /*
+        System.out.println(JsonValueType.BOOLEAN + " " + type);
+        
+        System.out.println("Object bool " + (String)val);
+        
+        
+        if (type == JsonValueType.BOOLEAN) return Boolean.parseBoolean((String)val);
         return false;
+        */
     }
     //-----------------------------------------------------------
     public int getIntValue ()  {

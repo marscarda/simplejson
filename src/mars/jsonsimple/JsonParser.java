@@ -50,8 +50,7 @@ public class JsonParser
      * @return Un Objeto JsonPair
      * @throws Exception 
      */
-    private static JsonPair createPair (String strpair) throws JsonParseException
-    {
+    private static JsonPair createPair (String strpair) throws JsonParseException {
         StringBuilder str = new StringBuilder(strpair);
         StringBuilder name = new StringBuilder();
         String value;
@@ -62,20 +61,16 @@ public class JsonParser
         TxtQualifier txtq = TxtQualifier.NONE;
         //=================================================================
         //En esta etapa se busca el nombre del par.
-        while (index < len)
-        {
+        while (index < len) {
             //=============================================================
             current = str.codePointAt(index); // Es : (Separa el nombre del valor).
-            if (current == 58)
-            {
+            if (current == 58) {
                 break;
             }
             //=============================================================
-            switch (txtq)
-            {
+            switch (txtq) {
                 //=========================================================
-                case NONE:
-                {
+                case NONE: {
                     //-----------------------------------------------------
                     if (current == 39)
                     { txtq = TxtQualifier.SINGLE; break; }
@@ -94,8 +89,7 @@ public class JsonParser
                     break;
                 }
                 //=========================================================
-                case SINGLE:
-                {
+                case SINGLE: {
                     //-----------------------------------------------------
                     if (current == 39)
                     { txtq = TxtQualifier.NONE; break; }
@@ -107,8 +101,7 @@ public class JsonParser
                     break;
                 }
                 //=========================================================
-                case DOUBLE:
-                {
+                case DOUBLE: {
                     //-----------------------------------------------------
                     if (current == 34)
                     { txtq = TxtQualifier.NONE; break; }
@@ -136,10 +129,23 @@ public class JsonParser
             throw new JsonParseException("Failed to parse a JSON pair (4)", strpair);
         //=================================================================
         JsonPair pair = new JsonPair(name.toString());
+        
+        
+        
+        
+        
+        
         InternalValue ivalue = createValue(value);
+        
+        System.out.println("---------------");
+        System.out.println(ivalue.value.toString());
+        System.out.println("---------------");
+        
+        
+        
+        
         //-----------------------------------------------------------------
-        switch (ivalue.type)
-        {
+        switch (ivalue.type) {
             //--------------------------------------------
             case INTEGER:
                 pair.setValue(Long.valueOf(ivalue.value.toString()));
@@ -149,8 +155,7 @@ public class JsonParser
                 pair.setValue(Double.valueOf(ivalue.value.toString()));
                 break;
             //--------------------------------------------
-            case STRING:
-            {
+            case STRING: {
                 pair.setEncodedValue(ivalue.value.toString());
                 break;
             }
@@ -159,19 +164,16 @@ public class JsonParser
                 pair.setValue(Boolean.valueOf(ivalue.value.toString()));
                 break;
             //--------------------------------------------
-            case JSONOBJECT:
-            {
+            case JSONOBJECT: {
                 JsonObject nwobj = createObject(ivalue.value.toString());
                 pair.setValue(nwobj);
                 break;
             }
             //--------------------------------------------
-            case JSONARRAY:
-            {
+            case JSONARRAY: {
                 ArrayList<JsonObject> objsar = new ArrayList<>();
                 String[] objectstxt = splitPairs(ivalue.value.toString());
-                for (String jsontxt : objectstxt)
-                {
+                for (String jsontxt : objectstxt) {
                     String objtxt = getTxtBetweenBraces(jsontxt);
                     JsonObject nwobj = createObject(objtxt);
                     objsar.add(nwobj);
@@ -185,19 +187,20 @@ public class JsonParser
         return pair;
         //=================================================================
     }
-    //======================================================================
+    //**********************************************************************
     /**
      * Analiza un valor para determinar que es.
      * @param value
      * @return
      * @throws Exception 
      */
+    @Deprecated
     private static InternalValue createValue (String value) throws JsonParseException
     {
         //=======================================================
-        StringBuilder str = new StringBuilder(value);
+        //String str = value;
         int index = 0;
-        int len = str.length();
+        int len = value.length();
         int current;
         boolean accepted;
         boolean keepadding = true;
@@ -206,7 +209,7 @@ public class JsonParser
         //=======================================================
         while (index < len)
         {
-            current = str.codePointAt(index);
+            current = value.codePointAt(index);
             //===================================================
             //Se busca un valor null
             if (current == 110 || current == 78)//Se encontro una 'n' 0 'N', Podria ser null.
@@ -214,34 +217,32 @@ public class JsonParser
                 int toend = len - index;
                 if (toend > 3)
                 {
-                    //val.value.appendCodePoint(current); 
                     index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 117 && current != 85)//Tiene que ser 'u' o 'U'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     //val.value.appendCodePoint(current); 
                     index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 108 && current != 76)//Tiene que ser 'l' o 'L'
                         throw new JsonParseException("Failed to parse JSON value", value);
-                    //val.value.appendCodePoint(current); 
                     index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 108 && current != 76)//Tiene que ser 'l' o 'L'
                         throw new JsonParseException("Failed to parse JSON value", value);
-                    //val.value.appendCodePoint(current); 
                     index++;
                     //-------------------------------------------
                     keepadding = false;
                     break;
+                    //-------------------------------------------
                 }
             }
             //===================================================
-            //Se busca un valor boolean true
-            if (current == 116 || current == 84)//Se encontro una 't' 0 'T', Podria ser True.
+            //I we fond an F or f we search a value of false
+            if (current == 116 || current == 84)
             {
                 int toend = len - index;
                 if (toend > 3)
@@ -249,17 +250,20 @@ public class JsonParser
                     val.value.appendCodePoint(current); 
                     index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 114 && current != 82)//Tiene que ser 'r' o 'R'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     val.value.appendCodePoint(current); index++;
+                    
+                    
+                    
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 117 && current != 85)//Tiene que ser 'u' o 'U'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     val.value.appendCodePoint(current); index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 101 && current != 69)//Tiene que ser 'e' o 'E'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     val.value.appendCodePoint(current); index++;
@@ -267,34 +271,33 @@ public class JsonParser
                     val.type = JsonValueType.BOOLEAN;
                     keepadding = false;
                     break;
+                    //-------------------------------------------
                 }
             }
             //===================================================
-            //Se busca un valor boolean false
-            if (current == 102 || current == 70)//Se encontro una 'f' 0 'F', Podria ser False.
-            {
+            //We found an F or f. We go for a 'false'.
+            if (current == 102 || current == 70) {
                 int toend = len - index;
-                if (toend > 4)
-                {
+                if (toend > 4) {
                     val.value.appendCodePoint(current); 
                     index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 97 && current != 65)//Tiene que ser 'a' o 'A'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     val.value.appendCodePoint(current); index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 108 && current != 76)//Tiene que ser 'l' o 'L'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     val.value.appendCodePoint(current); index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 115 && current != 83)//Tiene que ser 's' o 'S'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     val.value.appendCodePoint(current); index++;
                     //-------------------------------------------
-                    current = str.codePointAt(index);
+                    current = value.codePointAt(index);
                     if (current != 101 && current != 69)//Tiene que ser 'e' o 'E'
                         throw new JsonParseException("Failed to parse JSON value", value);
                     val.value.appendCodePoint(current); index++;
@@ -306,8 +309,7 @@ public class JsonParser
             }
             //===================================================
             //Un numero o signo menos. se asume como entero
-            if ((current > 47 && current < 58) || current == 45)
-            {
+            if ((current > 47 && current < 58) || current == 45) {
                 val.value.appendCodePoint(current);
                 val.type = JsonValueType.INTEGER;
                 index++;
@@ -315,8 +317,7 @@ public class JsonParser
             }
             //===================================================
             //Una comilla simple. Se asume con texto.
-            if (current == 39)
-            {
+            if (current == 39) {
                 //val.value.appendCodePoint(current);
                 val.type = JsonValueType.STRING;
                 val.qual = TxtQualifier.SINGLE;
@@ -325,8 +326,7 @@ public class JsonParser
             }
             //===================================================
             //Una comilla doble. Se asume como texto.
-            if (current == 34)
-            {
+            if (current == 34) {
                 //val.value.appendCodePoint(current);
                 val.type = JsonValueType.STRING;
                 val.qual = TxtQualifier.DOUBLE;
@@ -335,19 +335,20 @@ public class JsonParser
             }
             //===================================================
             //Una llave abierta. Se asume como objeto.
-            if (current == 123)
-            {
+            if (current == 123) {
                 val.type = JsonValueType.JSONOBJECT;
                 val.value.append(JsonParser.getTxtBetweenBraces(value));
                 return val;
             }
             //===================================================
-            if (current == 91)
-            {
+            if (current == 91) {
                 val.type = JsonValueType.JSONARRAY;
                 val.value.append(JsonParser.getTxtBetweenBrackets(value));
                 return val;
             }
+            //===================================================
+            
+            
             //===================================================
             //Ninguna de las anteriores. Solo se aceptan espacios, etc.
             accepted = false;
@@ -364,21 +365,29 @@ public class JsonParser
         //Hasta aqui. Es null, numero o texto.
         while (index < len && keepadding)
         {
-            current = str.codePointAt(index);
+            current = value.codePointAt(index);
             //===================================================
+            
+            
+            
+            
             switch (val.type)
             {
                 //===============================================
+                
+                case BOOLEAN:
+                    keepadding = false;
+                    
+                
+                //===============================================
                 case INTEGER:
-                    if (current == 46)//Punto flotante.
-                    {
+                    if (current == 46) {
                         val.value.appendCodePoint(current);
                         val.type = JsonValueType.FLOAT;
                         index++;
                         break;
                     }
-                    else if (current > 47 && current < 58)//Es un numero.
-                    {
+                    else if (current > 47 && current < 58) {
                         val.value.appendCodePoint(current);
                         index++;
                         break;
@@ -439,8 +448,8 @@ public class JsonParser
             //===================================================
         }
         //=======================================================
-        //Estamos en el final. Se chequea que la sintaxis esta bien.
-        //No puede haber nada abierto (comillas, llaves, etc.)
+        //We are at the final. We check for sintax. Nothing open
+        //is allowed. Braces, Quotes, Brackets.
         if (val.qual != TxtQualifier.NONE)
             throw new JsonParseException("Failed to parse JSON value", value);
         //-------------------------------------------------------
@@ -448,7 +457,7 @@ public class JsonParser
         //y tabs o saltos de linea.
         while (index < len)
         {
-            current = str.codePointAt(index);
+            current = value.codePointAt(index);
             accepted = false;
             if (current == 9) accepted = true;
             if (current == 10) accepted = true;
@@ -461,7 +470,279 @@ public class JsonParser
         //=======================================================
         return val;
     }
+    //**********************************************************************
+    public static InternalValue ceateValue2 (String rawtext) throws JsonParseException {
+        String text = netText(rawtext);
+        InternalValue value = new InternalValue();
+        //=============================================
+        if (testInteger(text)) {
+            //System.out.println("Is an integer");
+            //value.txtval = text;
+            value.type = JsonValueType.INTEGER;
+            //return value;
+        }
+        //=============================================
+        if (testFloat(text)) {
+            //System.out.println("Is a float");
+            //value.txtval = text;
+            value.type = JsonValueType.FLOAT;
+            //return value;
+        }
+        //=============================================
+        if (testString(text)) {
+            //System.out.println("Is a string");
+            //value.txtval = text;
+            value.type = JsonValueType.STRING;
+            return value;
+        }
+        //=============================================
+        if (testNull(text)) {
+            //System.out.println("Is null");
+            value.type = JsonValueType.NULL;
+        }
+        //=============================================
+        if (testBoolean(text)) {
+            //System.out.println("Is a boolean");
+            value.type = JsonValueType.BOOLEAN;
+        }
+        //=============================================
+        if (testJsonObj(text)) {
+            //System.out.println("Is an Object");
+            value.type = JsonValueType.JSONOBJECT;
+        }
+        //=============================================
+        if (testJsonObjArray(text)) {
+            //System.out.println("Is an Array");
+            value.type = JsonValueType.JSONARRAY;
+        }
+        //=============================================
+        switch (value.type) {
+            case INTEGER:
+            case FLOAT:
+            case BOOLEAN:
+            case NULL:
+                value.txtval = text;
+                return value;
+            case STRING:
+            case JSONOBJECT:
+            case JSONARRAY: {
+                value.txtval = text.substring(1, text.length() -2);
+                return value;
+            }
+        }
+        //============================================
+        //Nothing we can identify.
+        throw new JsonParseException("Json Parse failed", rawtext);
+        //=============================================
+    }
+    //**********************************************************************
+    /**
+     * Creates a string free of spaces and L/F in its extremes.
+     * @param textin
+     * @return
+     * @throws JsonParseException 
+     */
+    private static String netText (String textin) throws JsonParseException {
+        //------------------------------------------------------------------
+        int rawlen = textin.length();
+        int indfrom = 0;
+        int indto = 0;
+        int cp;
+        //------------------------------------------------------------------
+        //We find the actual start of the value.
+        for (int n = 0; n < rawlen; n++) {
+            indfrom = n;
+            cp = textin.codePointAt(n);
+            if (cp == 9) continue;
+            if (cp == 10) continue;
+            if (cp == 13) continue;
+            if (cp == 32) continue;
+            break;
+        }
+        //------------------------------------------------------------------
+        //We find the actual end of the value
+        for (int n = rawlen - 1; n >= 0; n--) {
+            cp = textin.codePointAt(n);
+            if (cp == 9) continue;
+            if (cp == 10) continue;
+            if (cp == 13) continue;
+            if (cp == 32) continue;
+            indto = n;
+            break;
+        }
+        //------------------------------------------------------------------
+        if (indfrom > indto) throw new JsonParseException("Invalid text found", textin);
+        if (indfrom == indto) {
+            cp = textin.codePointAt(indfrom);
+            switch (cp) {
+                case 9:
+                case 10:
+                case 13:
+                case 32:
+                    throw new JsonParseException("Invalid text found", textin);
+            }
+        }
+        //------------------------------------------------------------------
+        String actualtext = textin.substring(indfrom, indto + 1);
+        return actualtext;
+        //------------------------------------------------------------------
+    }
+    //**********************************************************************
+    /**
+     * Test if the string represents a null value
+     * @param textin
+     * @return 
+     */
+    private static boolean testNull (String textin) {
+        return (textin.compareToIgnoreCase("NULL") == 0);
+    }
     //======================================================================
+    /**
+     * Tests if the text represents a boolean value
+     * @param textin
+     * @return 
+     */
+    private static boolean testBoolean (String textin) {
+        if (textin.compareToIgnoreCase("TRUE") == 0) return true;
+        return (textin.compareToIgnoreCase("FALSE") == 0);
+    }
+    //**********************************************************************
+    /**
+     * We test if the text represents an integer number.
+     * @param value
+     * @return 
+     */
+    private static boolean testInteger (String text) {
+        //------------------------------------------------------------------
+        int cp;
+        //------------------------------------------------------------------
+        //First test. Accepted numbers, minus sign and floating point.
+        for (int n = 0; n < text.length(); n++) {
+            cp = text.codePointAt(n);
+            if (cp >= 47 && cp <= 57) continue;
+            if (cp == 45) continue;
+            return false;
+        }
+        //------------------------------------------------------------------
+        //Second test. Minus sign not accepted beyon index 0
+        for (int n = 1; n < text.length(); n++) {
+            cp = text.codePointAt(n);
+            if (cp == 45) return false;
+        }
+        //------------------------------------------------------------------
+        //Third test. If it is only a minus sign is not an integer
+        if (text.length() == 1)
+            if (text.codePointAt(0) == 45) return false;
+        //------------------------------------------------------------------
+        return true;
+        //------------------------------------------------------------------
+    }
+    //**********************************************************************
+    /**
+     * Tests if the text represents a float number.
+     * @param text
+     * @return 
+     */
+    private static boolean testFloat (String text) {
+        //------------------------------------------------------------------
+        int cp;
+        boolean negative = false;
+        boolean numfound = false;
+        int fptcount = 0;
+        int fptat = 1;
+        //------------------------------------------------------------------
+        //First test. Accepted numbers or minus sign
+        for (int n = 0; n < text.length(); n++) {
+            cp = text.codePointAt(n);
+            if (cp >= 47 && cp <= 57) { numfound = true; continue; }
+            if (cp == 45) { negative = true; continue; }
+            if (cp == 46) { fptcount++; fptat = n; continue; }
+            return false;
+        }
+        //------------------------------------------------------------------
+        if (!numfound) return false;
+        if (fptcount > 1) return false;
+        //------------------------------------------------------------------
+        //Second test. Minus sign not accepted beyon index 0
+        for (int n = 1; n < text.length(); n++) {
+            cp = text.codePointAt(n);
+            if (cp == 45) return false;
+        }
+        //------------------------------------------------------------------
+        if (!negative && fptat == 0) return false;
+        if (negative && fptat == 1) return false;
+        //------------------------------------------------------------------
+        return true;
+        //------------------------------------------------------------------
+    }
+    //**********************************************************************
+    private static boolean testString (String text) {
+        //------------------------------------------------------------------
+        int len = text.length();
+        if (len < 2) return false;
+        //------------------------------------------------------------------
+        int cp;
+        int qcp = 0;
+        //------------------------------------------------------------------
+        //The first char must be some quote. And we remeber if single or double.
+        cp = text.codePointAt(0);
+        if (cp == 34 || cp == 39) qcp = cp;
+        if (qcp == 0) return false;
+        //------------------------------------------------------------------
+        //Last char must be equal to the first.
+        cp = text.codePointAt(len -1);
+        if (cp != qcp) return false;
+        //------------------------------------------------------------------
+        //If we find the text qualifier must be preceded with "\". 
+        for (int n = 1; n < len -1; n++) {
+            cp = text.codePointAt(n);
+            if (cp == qcp) 
+                if (text.codePointBefore(n) != 92) return false;
+        }
+        //------------------------------------------------------------------
+        return true;
+        //------------------------------------------------------------------
+    }
+    //**********************************************************************
+    /**
+     * Tests if the text represents a json object.
+     * @param text
+     * @return 
+     */
+    private static boolean testJsonObj (String text) {
+        //------------------------------------------------------------------
+        int len = text.length();
+        if (len < 2) return false;
+        //------------------------------------------------------------------
+        int cp;
+        //------------------------------------------------------------------
+        //First char must be an open brace.
+        cp = text.codePointAt(0);
+        if (cp != 123) return false;
+        cp = text.codePointAt(len -1);
+        if (cp != 125) return false;
+        //------------------------------------------------------------------
+        return true;
+        //------------------------------------------------------------------
+    }
+    //**********************************************************************
+    private static boolean testJsonObjArray (String text) {
+        //------------------------------------------------------------------
+        int len = text.length();
+        if (len < 2) return false;
+        //------------------------------------------------------------------
+        int cp;
+        //------------------------------------------------------------------
+        //First char must be an open brace.
+        cp = text.codePointAt(0);
+        if (cp != 91) return false;
+        cp = text.codePointAt(len -1);
+        if (cp != 93) return false;
+        //------------------------------------------------------------------
+        return true;
+        //------------------------------------------------------------------
+    }
+    //**********************************************************************
     /**
      * Extrae el contenido del texto entre dos llaves
      * Excluyendo a estas
@@ -812,8 +1093,9 @@ enum TxtQualifier
 //==========================================================================
 class InternalValue
 {
-    JsonValueType type = JsonValueType.NULL;
+    JsonValueType type = JsonValueType.NONE;
     StringBuilder value = new StringBuilder();
+    String txtval = null;
     TxtQualifier qual = TxtQualifier.NONE;
 }
 //==========================================================================

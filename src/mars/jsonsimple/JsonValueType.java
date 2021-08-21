@@ -1,6 +1,7 @@
 package mars.jsonsimple;
 //============================================================
 public enum JsonValueType {
+    NONE,
     NULL,
     STRING,
     INTEGER,
