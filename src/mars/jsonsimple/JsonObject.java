@@ -69,9 +69,9 @@ public class JsonObject {
      */
     public JsonPair getPair (String name) {
         String n = name.toLowerCase();
-        for (JsonPair pair : pairs)
+        for (JsonPair pair : pairs) 
             if (n.equals(pair.nme.toLowerCase())) return pair;
-        return new JsonPair("na", "n/a");
+        return new JsonPair("nill", "nill");
     }
     //===================================================
     @Override

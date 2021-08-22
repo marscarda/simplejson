@@ -17,6 +17,7 @@ public class JsonPair {
     public JsonPair (String name) {
         nme = name;
         type = JsonValueType.NULL;
+        val = null;
     }
     //-----------------------------------------------------------
     /**
@@ -190,29 +191,15 @@ public class JsonPair {
         return (long)0;
     }
     //-----------------------------------------------------------
-    public Double getDoubleValue() {
-        if (type == JsonValueType.INTEGER) return Double.valueOf(String.valueOf(val));
-        if (type == JsonValueType.FLOAT) return (Double)val;
-        return (double)0;
+    public float getFloatValue() {
+        if (type == JsonValueType.INTEGER) return Float.valueOf(String.valueOf(val));
+        if (type == JsonValueType.FLOAT) return (Float)val;
+        return Float.valueOf(0);
     }
     //-----------------------------------------------------------
     public Boolean getBooleanValue() {
-        
-        String a = this.getRawStringValue();
-        
-        System.out.println("QQQ " + a);
-        
-        return Boolean.parseBoolean(a);
-        
-        /*
-        System.out.println(JsonValueType.BOOLEAN + " " + type);
-        
-        System.out.println("Object bool " + (String)val);
-        
-        
-        if (type == JsonValueType.BOOLEAN) return Boolean.parseBoolean((String)val);
+        if (type == JsonValueType.BOOLEAN) return (Boolean)val;
         return false;
-        */
     }
     //-----------------------------------------------------------
     public int getIntValue ()  {
