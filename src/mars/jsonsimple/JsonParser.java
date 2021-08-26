@@ -20,9 +20,11 @@ public class JsonParser {
      */
     public static JsonObject parseAndCreateJsonObject (String jtoparse) throws JsonParseException {
         //==================================================================
+        if (jtoparse.length() == 0)
+            throw new JsonParseException("Invalid Json content a", jtoparse);
         String nettext = netText(jtoparse);
         if (!testJsonObj(nettext))
-            throw new JsonParseException("Invalid Json content", jtoparse);
+            throw new JsonParseException("Invalid Json content b", jtoparse);
         String objtext = innerText(nettext);
         return createObject (objtext);
         //==================================================================
@@ -89,10 +91,23 @@ public class JsonParser {
             }
             //-----------------------------------------------
             case JSONARRAY: {
+                
+                
+                
                 String text = innerText(intrnlval.txtval);
                 String[] textobjs = splitByFreeCommas(text);
                 String netobj;
+                
+                
+                
                 int count = textobjs.length;
+                
+                
+                
+                
+                
+                
+                
                 JsonObject[] objects = new JsonObject[count];
                 for (int n = 0; n < count; n++) {
                     netobj = netText(textobjs[n]);
@@ -522,7 +537,16 @@ public class JsonParser {
                     if (textopen > 0) break;
                     if (childrenopen > 0) break;
                     String text = jsonstr.substring(indfrom, index);
+                    
+                    
+                    System.out.println("A " + textParts.length);
+                    
+                    
                     textParts = addTextPart(textParts, text);
+                    
+                    
+                    System.out.println("B " + textParts.length);
+                    
                     indfrom = index + 1;
                     break;
                 }
@@ -540,6 +564,20 @@ public class JsonParser {
     }
     //======================================================================
     private static String[] addTextPart (String[] parts, String text) {
+        //==================================================================
+        int textlen = text.length();
+        int cp;
+        boolean something = false;
+        for (int n = 0; n < textlen; n++) {
+            cp = text.codePointAt(n);
+            if (cp == 9) continue;
+            if (cp == 10) continue;
+            if (cp == 13) continue;
+            if (cp == 32) continue;
+            something = true;
+        }
+        if (!something) return parts;
+        //==================================================================
         int count = parts.length;
         String[] newarray = new String[count + 1];
         System.arraycopy(parts, 0, newarray, 0, count);
