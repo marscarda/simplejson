@@ -537,16 +537,7 @@ public class JsonParser {
                     if (textopen > 0) break;
                     if (childrenopen > 0) break;
                     String text = jsonstr.substring(indfrom, index);
-                    
-                    
-                    System.out.println("A " + textParts.length);
-                    
-                    
                     textParts = addTextPart(textParts, text);
-                    
-                    
-                    System.out.println("B " + textParts.length);
-                    
                     indfrom = index + 1;
                     break;
                 }
